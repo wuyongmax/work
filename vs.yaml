@@ -1,0 +1,38 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: https-service0
+  namespace: securesvc 
+spec:
+  gateways:
+    - https-service0
+  hosts:
+    - 'istioexam.com'
+  http:
+  - match:
+      - uri:
+          exact: /healthz
+    route:
+      - destination:
+          host: service0 
+          port:
+            number: 80
+---
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: https-service0
+  namespace: securesvc
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - hosts:
+        - 'httpserver.com'
+      port:
+        name: https-service0
+        number: 443
+        protocol: HTTPS
+      tls:
+        mode: SIMPLE
+        credentialName: cncamp-credential
